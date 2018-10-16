@@ -7,13 +7,14 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/sysu-go-online/service-end/model"
+	projectModel "github.com/sysu-go-online/project-service/model"
+	userModel "github.com/sysu-go-online/user-service/model"
 )
 
 // ProjectController is controller for user
 type ProjectController struct {
-	model.Project
-	model.User
+	projectModel.Project
+	userModel.User
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Language    int    `json:"language"`

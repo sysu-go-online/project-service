@@ -4,7 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/rs/cors"
-	"github.com/sysu-go-online/service-end/controller"
+	"github.com/sysu-go-online/project-service/controller"
 	"github.com/urfave/negroni"
 )
 
