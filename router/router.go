@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/rs/cors"
 	"github.com/sysu-go-online/project-service/controller"
+	"github.com/sysu-go-online/public-service/types"
 	"github.com/urfave/negroni"
 )
 
@@ -15,10 +16,10 @@ func GetServer() *negroni.Negroni {
 	r := mux.NewRouter()
 
 	// user collection
-	r.Handle("", controller.ErrorHandler(controller.CreateProjectHandler)).Methods("POST")
-	r.Handle("/", controller.ErrorHandler(controller.CreateProjectHandler)).Methods("POST")
-	r.Handle("", controller.ErrorHandler(controller.ListProjectsHandler)).Methods("GET")
-	r.Handle("/", controller.ErrorHandler(controller.ListProjectsHandler)).Methods("GET")
+	r.Handle("", types.ErrorHandler(controller.CreateProjectHandler)).Methods("POST")
+	r.Handle("/", types.ErrorHandler(controller.CreateProjectHandler)).Methods("POST")
+	r.Handle("", types.ErrorHandler(controller.ListProjectsHandler)).Methods("GET")
+	r.Handle("/", types.ErrorHandler(controller.ListProjectsHandler)).Methods("GET")
 
 	// Use classic server and return it
 	handler := cors.Default().Handler(r)

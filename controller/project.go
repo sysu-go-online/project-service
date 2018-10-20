@@ -17,7 +17,7 @@ type ProjectController struct {
 	userModel.User
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	Language    int    `json:"language"`
+	Path        string `json:"path"`
 	GitPath     string `json:"git_path"`
 }
 
