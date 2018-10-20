@@ -22,7 +22,6 @@ script:
   - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 # Build image locally
   - docker build -t txzdream/go-online-project_service:dev .
-  - go test ./...
 
 after_success:
 # Push to docker registry
