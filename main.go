@@ -4,7 +4,7 @@ import (
 	"os"
 
 	flag "github.com/spf13/pflag"
-	"github.com/sysu-go-online/service-end/router"
+	"github.com/sysu-go-online/project-service/router"
 )
 
 func main() {
