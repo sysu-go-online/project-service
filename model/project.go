@@ -1,13 +1,13 @@
 package model
 
 import (
-	"errors"
 	"fmt"
 	"os"
-	"path"
+	"path/filepath"
 	"time"
 
 	"github.com/go-xorm/xorm"
+	git "gopkg.in/src-d/go-git.v4"
 )
 
 // Project corresponds to project table in db
@@ -19,6 +19,7 @@ type Project struct {
 	CreateTime  *time.Time `xorm:"created"`
 	Description string
 	GitPath     string
+	Path        string
 }
 
 // TableName defines table name
@@ -38,26 +39,9 @@ func (p *Project) Insert(session *xorm.Session) (int, error) {
 
 // CreateProjectRoot create project root in the user home
 func (p *Project) CreateProjectRoot(username string) error {
-	userHome := path.Join("/home", username)
-	switch p.Language {
-	case 0:
-		// golang
-		projectPath := path.Join(userHome, "/go/src/github.com/", p.Name)
-		importPath := path.Join(userHome, "/go/import")
-		err := os.MkdirAll(projectPath, os.ModeDir)
-		if err != nil {
-			return err
-		}
-		err = os.MkdirAll(importPath, os.ModeDir)
-		return err
-	case 1:
-		// cpp
-		projectPath := path.Join(userHome, "/cpp/", p.Name)
-		err := os.MkdirAll(projectPath, os.ModeDir)
-		return err
-	default:
-		return errors.New("No such language type")
-	}
+	userHome := filepath.Join("/home", username)
+	path := filepath.Join(userHome, p.Path, p.Name)
+	return os.MkdirAll(path, os.ModeDir)
 }
 
 // GetWithUserID returns projects with given user id
@@ -70,7 +54,7 @@ func (p *Project) GetWithUserID(session *xorm.Session) ([]Project, error) {
 	return ps, nil
 }
 
-// GetWithUserIDAndNmae returns project with given user id and project name
+// GetWithUserIDAndName returns project with given user id and project name
 func (p *Project) GetWithUserIDAndName(session *xorm.Session) (bool, error) {
 	return session.Where("user_id = ?", p.UserID).And("name = ?", p.Name).Get(p)
 }
@@ -78,4 +62,14 @@ func (p *Project) GetWithUserIDAndName(session *xorm.Session) (bool, error) {
 // GetWithID returns project with given project id
 func (p *Project) GetWithID(session *xorm.Session) (bool, error) {
 	return session.Where("id = ?", p.ID).Get(p)
+}
+
+// CloneFromGitPath clone project form given git path
+func (p *Project) CloneFromGitPath(username string) error{
+	userHome := filepath.Join("/home", username)
+	path := filepath.Join(userHome, p.Path, p.Name)
+	_, err := git.PlainClone(path, true, &git.CloneOptions{
+		URL: p.GitPath,
+	})
+	return err
 }

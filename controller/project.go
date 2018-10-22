@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -19,12 +20,12 @@ type ProjectController struct {
 	Description string `json:"description"`
 	Path        string `json:"path"`
 	GitPath     string `json:"git_path"`
+	IsClone     bool   `json:"isClone"`
 }
 
 // ListProjectsResponse is response for list projects
 type ListProjectsResponse struct {
-	Name     string `json:"name"`
-	Language int    `json:"language"`
+	Name string `json:"name"`
 }
 
 // CreateProjectHandler create project
@@ -44,6 +45,7 @@ func CreateProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	project.Project.Name = project.Name
 	project.Project.Description = project.Description
 	project.Project.GitPath = project.GitPath
+	project.Project.Path = project.Path
 
 	session := MysqlEngine.NewSession()
 	project.User.Username = mux.Vars(r)["username"]
@@ -62,12 +64,20 @@ func CreateProjectHandler(w http.ResponseWriter, r *http.Request) error {
 		session.Rollback()
 		return err
 	}
+	// create project root
 	err = project.Project.CreateProjectRoot(project.User.Username)
 	if err != nil {
 		session.Rollback()
 		return err
 	}
 	session.Commit()
+	// clone from git path
+	if project.IsClone {
+		err := project.Project.CloneFromGitPath(project.User.Username)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 	if affected == 0 {
 		w.WriteHeader(400)
 		return nil
@@ -102,7 +112,7 @@ func ListProjectsHandler(w http.ResponseWriter, r *http.Request) error {
 
 	ret := make([]ListProjectsResponse, 0)
 	for _, v := range ps {
-		tmp := ListProjectsResponse{v.Name, v.Language}
+		tmp := ListProjectsResponse{v.Name}
 		ret = append(ret, tmp)
 	}
 	body, err := json.Marshal(ret)
