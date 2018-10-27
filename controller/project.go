@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -41,7 +41,6 @@ func CreateProjectHandler(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	// TODO: check content
-	project.Project.Language = project.Language
 	project.Project.Name = project.Name
 	project.Project.Description = project.Description
 	project.Project.GitPath = project.GitPath
