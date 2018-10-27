@@ -39,7 +39,7 @@ func (p *Project) Insert(session *xorm.Session) (int, error) {
 
 // CreateProjectRoot create project root in the user home
 func (p *Project) CreateProjectRoot(username string) error {
-	userHome := filepath.Join("/home", username)
+	userHome := filepath.Join("/home", username, "projects")
 	path := filepath.Join(userHome, p.Path, p.Name)
 	return os.MkdirAll(path, os.ModeDir)
 }
@@ -65,8 +65,8 @@ func (p *Project) GetWithID(session *xorm.Session) (bool, error) {
 }
 
 // CloneFromGitPath clone project form given git path
-func (p *Project) CloneFromGitPath(username string) error{
-	userHome := filepath.Join("/home", username)
+func (p *Project) CloneFromGitPath(username string) error {
+	userHome := filepath.Join("/home", username, "projects")
 	path := filepath.Join(userHome, p.Path, p.Name)
 	_, err := git.PlainClone(path, true, &git.CloneOptions{
 		URL: p.GitPath,
