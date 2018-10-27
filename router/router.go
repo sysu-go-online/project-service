@@ -16,8 +16,8 @@ func GetServer() *negroni.Negroni {
 	r := mux.NewRouter()
 
 	// user collection
-	r.Handle("/{username}/projects", types.ErrorHandler(controller.CreateProjectHandler)).Methods("POST")
-	r.Handle("/{username}/projects", types.ErrorHandler(controller.ListProjectsHandler)).Methods("GET")
+	r.Handle("/users/{username}/projects", types.ErrorHandler(controller.CreateProjectHandler)).Methods("POST")
+	r.Handle("/users/{username}/projects", types.ErrorHandler(controller.ListProjectsHandler)).Methods("GET")
 
 	// Use classic server and return it
 	handler := cors.Default().Handler(r)
