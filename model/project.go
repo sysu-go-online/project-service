@@ -13,7 +13,6 @@ import (
 // Project corresponds to project table in db
 type Project struct {
 	ID          int        `xorm:"pk autoincr 'id'"`
-	Language    int        `xorm:"notnull"`
 	UserID      int        `xorm:"'user_id'"`
 	Name        string     `xorm:"notnull"`
 	CreateTime  *time.Time `xorm:"created"`
@@ -68,7 +67,7 @@ func (p *Project) GetWithID(session *xorm.Session) (bool, error) {
 func (p *Project) CloneFromGitPath(username string) error {
 	userHome := filepath.Join("/home", username, "projects")
 	path := filepath.Join(userHome, p.Path, p.Name)
-	_, err := git.PlainClone(path, true, &git.CloneOptions{
+	_, err := git.PlainClone(path, false, &git.CloneOptions{
 		URL: p.GitPath,
 	})
 	return err

@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/sysu-go-online/public-service/tools"
+
 	"github.com/gorilla/mux"
 
 	projectModel "github.com/sysu-go-online/project-service/model"
@@ -31,6 +33,11 @@ type ListProjectsResponse struct {
 // CreateProjectHandler create project
 // TODO: Check if the same name exists
 func CreateProjectHandler(w http.ResponseWriter, r *http.Request) error {
+	// Check token
+	if ok, err := tools.CheckJWT(r.Header.Get("Authorization"), AuthRedisClient); !(ok && err == nil) {
+		w.WriteHeader(401)
+		return nil
+	}
 	r.ParseForm()
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -71,6 +78,7 @@ func CreateProjectHandler(w http.ResponseWriter, r *http.Request) error {
 	}
 	session.Commit()
 	// clone from git path
+	// TODO: use mq to decrease waitting time
 	if project.IsClone {
 		err := project.Project.CloneFromGitPath(project.User.Username)
 		if err != nil {
