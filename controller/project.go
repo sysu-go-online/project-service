@@ -77,17 +77,17 @@ func CreateProjectHandler(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	session.Commit()
+	if affected == 0 {
+		w.WriteHeader(400)
+		return nil
+	}
+	w.WriteHeader(200)
 	// clone from git path
-	// TODO: use mq to decrease waitting time
 	if project.IsClone {
 		err := project.Project.CloneFromGitPath(project.User.Username)
 		if err != nil {
 			fmt.Println(err)
 		}
-	}
-	if affected == 0 {
-		w.WriteHeader(400)
-		return nil
 	}
 	return nil
 }
