@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-xorm/xorm"
+	"github.com/sysu-go-online/public-service/tools"
 	git "gopkg.in/src-d/go-git.v4"
 )
 
@@ -40,7 +41,11 @@ func (p *Project) Insert(session *xorm.Session) (int, error) {
 func (p *Project) CreateProjectRoot(username string) error {
 	userHome := filepath.Join("/home", username, "projects")
 	path := filepath.Join(userHome, p.Path, p.Name)
-	return os.MkdirAll(path, os.ModeDir)
+	err := os.MkdirAll(path, os.ModeDir)
+	if err != nil {
+		return err
+	}
+	return tools.ChangePermission(username)
 }
 
 // GetWithUserID returns projects with given user id
