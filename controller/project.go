@@ -89,6 +89,7 @@ func CreateProjectHandler(w http.ResponseWriter, r *http.Request) error {
 			fmt.Println(err)
 		}
 	}
+	tools.ChangePermission(mux.Vars(r)["username"])
 	return nil
 }
 
